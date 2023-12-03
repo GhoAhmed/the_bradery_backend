@@ -11,9 +11,17 @@ class ProductController extends Controller
     {
         try {
             $products = Product::all();
+
+            // Transform the products to include the full image URL
+            $products = $products->map(function ($product) {
+                // Remove 'public/' from the image path
+                $product->image = asset('storage/' . substr($product->image, 7));
+                return $product;
+            });
+
             return response()->json(['products' => $products]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Une erreur est produite lors de la récupération des produits.'], 500);
+            return response()->json(['error' => 'An error occurred while fetching products.'], 500);
         }
     }
 
